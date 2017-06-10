@@ -6,7 +6,7 @@ if [[ -z "$LC_ALL" ]]; then
 	export LC_ALL=C
 fi
 printf "${LB}>> Begin installing dependencies\n${NC}"
-sudo apt-get upgrade -y
+#sudo apt-get upgrade -y
 sudo apt-get update -y
 sudo apt-get install build-essential -y
 sudo apt-get install xvfb -y
