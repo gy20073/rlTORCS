@@ -36,8 +36,10 @@
 
 /////////////////////////////////// by Chenyi
 #include <sys/shm.h>
-#define image_width 640
-#define image_height 480
+//#define image_width 640
+//#define image_height 480
+//const int image_width = 160;
+//const int image_height = 120;
 /////////////////////////////////// by Chenyi
 
 //////////////////////////////////////////// by yurong

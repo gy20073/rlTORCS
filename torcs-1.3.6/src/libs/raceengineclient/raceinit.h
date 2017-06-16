@@ -44,7 +44,10 @@ extern void ReGuiWithoutSelect(const char* raceconfig);
 //////////////////////////////////////////// end by yurong
 extern tModList *ReRaceModList;
 
-
+// added by yang, some constants
+#define image_width 160
+#define image_height 120
+#define yang_fps 5
 
 #endif /* _RACEINIT_H_ */
 

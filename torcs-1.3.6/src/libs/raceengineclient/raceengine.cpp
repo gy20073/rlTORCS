@@ -41,8 +41,10 @@
 #include "raceengine.h"
 
 /////////////////////////////////// by Chenyi
-#define image_width 640
-#define image_height 480
+//#define image_width 640
+//#define image_height 480
+//extern const int image_width;
+//extern const int image_height;
 /////////////////////////////////// by Chenyi
 
 /////////////////////////////////// by yurong
@@ -795,6 +797,9 @@ reCapture(void)
 	free(img);
 }
 
+double previous_t;
+int yang_count = 0;
+const int max_count = 100;
 
 int
 ReUpdate(void)
@@ -804,6 +809,9 @@ ReUpdate(void)
 	int mode = RM_ASYNC;
 	int i;
 	const int MAXSTEPS = 2000;
+	double after_update;
+	double after_simulation;
+	double fps;
 
 	START_PROFILE("ReUpdate");
 	ReInfo->_refreshDisplay = 0;
@@ -819,6 +827,7 @@ ReUpdate(void)
 			}
 			STOP_PROFILE("ReOneStep*");
 			// printf("end simu at time %lf\n", GfTimeClock());
+			//after_simulation =  GfTimeClock();
 
 			if (i > MAXSTEPS) {
 				// Cannot keep up with time warp, reset time to avoid lag when running slower again
@@ -829,15 +838,29 @@ ReUpdate(void)
 			ReInfo->_reGraphicItf.refresh(ReInfo->s);
 			glutPostRedisplay();	/* Callback -> reDisplay */
 			// printf("finish update\n");
+			
+			//after_update = GfTimeClock();
+			//fps = 1.0 / (after_update - t);
+			//printf("start time %f, finish simulation %f, finish update %f, fps_current=%f, fps_real=%f\n", 
+			//		t, after_simulation, after_update, fps, 1.0/(t-previous_t));
+			//previous_t = t;
 			break;
 
 /////////////////////////// by Yurong
 		case RM_DISP_MODE_TRAIN:
+			if (yang_count % max_count == 0){
+				t = GfTimeClock();
+				printf("fps over %d frames is %f\n", max_count, max_count*1.0/(t-previous_t));
+				previous_t = t;
+				yang_count = 1;
+			}else
+				yang_count ++;
+			
 			// frame skip included
 			// t = ReInfo->_reCurTime + 40 * RCM_MAX_DT_SIMU + 0.00004;
 			START_PROFILE("ReOneStep*");
 			// t = ReInfo->_reCurTime;
-			for (int i = 0; ReInfo->_reRunning && i < 40; ++i){
+			for (int i = 0; ReInfo->_reRunning && i < (500.0 / yang_fps); ++i){
 				ReOneStep(RCM_MAX_DT_SIMU);
 			}
 			// while (ReInfo->_reRunning && ((t - ReInfo->_reCurTime) >= RCM_MAX_DT_SIMU)) {

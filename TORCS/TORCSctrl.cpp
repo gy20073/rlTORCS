@@ -15,6 +15,8 @@
 #include <assert.h>
 #include <spawn.h>
 
+//#include "raceinit.h"
+
 
 extern "C"{
     #include "lua.h"
@@ -26,8 +28,8 @@ extern "C"{
     int luaopen_TORCSctrl(lua_State *L);
 }
 
-#define image_width 640
-#define image_height 480
+#define image_width 160
+#define image_height 120
 
 // using std::string;
 static void stackDump (lua_State *L) {
