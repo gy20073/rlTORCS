@@ -11,3 +11,8 @@ torcs-1.3.6/export/*
 *.a
 torcs-1.3.6/src/libs/txml/gennmtab/gennmtab
 .idea
+torcs-1.3.6/.torcs.rc
+torcs-1.3.6/Make-config
+torcs-1.3.6/config.h
+torcs-1.3.6/src/doc/torcsdoc.conf
+
