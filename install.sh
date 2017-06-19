@@ -32,7 +32,7 @@ do
 	printf "\t${LB}>> Try finding ${name}\n${NC}"
 	if ! $(luarocks list 2>/dev/null | grep ${name} >/dev/null); then
 		printf "\t${LB}>> Installing ${name}\n${NC}"
-		luarocks install ${name}
+		~/torch/install/bin/luarocks install ${name}
 	fi
 	printf "\t${LB}>> ${name} installed\n${NC}"
 done
