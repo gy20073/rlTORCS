@@ -132,6 +132,9 @@ int newGame(lua_State *L){
             args[5] = NULL;
         }
     }
+    for(int i=0; args[i]!=NULL; ++i){
+        printf("argument %d: %s\n", i, args[i]);
+    }
     posix_spawn(&pid, "/usr/local/bin/torcs", NULL, NULL, args, environ);
     lua_settop(L,0);
     lua_pushinteger(L, pid);

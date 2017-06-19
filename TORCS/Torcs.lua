@@ -13,6 +13,9 @@ local Torcs, super = classic.class('Torcs', Env)
 
 Torcs:mustHave("decodeAction")
 
+local image_width = 160
+local image_height = 120
+
 -- Constructor
 function Torcs:_init(opts)
 	opts = opts or {}
@@ -32,8 +35,8 @@ function Torcs:_init(opts)
 	self.distance = -9999
 	self.distance_gap = 0
 	self.frontNum = -1
-	self.observation_gray = torch.FloatTensor(1, 480, 640)
-	self.observation_RGB = torch.FloatTensor(3, 480, 640)
+	self.observation_gray = torch.FloatTensor(1, image_height, image_width)
+	self.observation_RGB = torch.FloatTensor(3,  image_height, image_width)
 	self.server = opts.server
 	self.isStarted = false
 	self.game_config = opts.game_config and opts.game_config or 'quickrace_discrete_single.xml'
@@ -49,23 +52,27 @@ function Torcs:_init(opts)
 	classic.strict(self)
 end
 
--- 1 state returned, 1 channel with height 480, width 640 (gray scale)
+-- 1 state returned, 1 channel with  image_height, image_width (gray scale)
 function Torcs:getStateSpec()
 	if self.use_RGB then
-		return {'real', {3, 480, 640}, {0, 1}}
+		return {'real', {3,  image_height, image_width}, {0, 1}}
 	else
-		return {'real', {1, 480, 640}, {0, 1}}
+		return {'real', {1,  image_height, image_width}, {0, 1}}
 	end
 end
 
--- RGB screen of height 480, width 640
+-- RGB screen of  image_height, image_width
 function Torcs.getDisplaySpec()
-	return {'real', {3, 480, 640}, {0, 1}}
+	return {'real', {3,  image_height, image_width}, {0, 1}}
 end
 
 -- Min and max reward (unknown)
 function Torcs.getRewardSpec()
 	return nil, nil
+end
+
+function sleep(n)
+  os.execute("sleep " .. tonumber(n))
 end
 
 function Torcs:start()
@@ -83,7 +90,7 @@ function Torcs:start()
 
 	config_path = paths.concat('game_config', self.game_config)
 	self.ctrl.initializeMem()
-	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or -1, config_path)
+	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or 0, config_path)
 	self:connect()
 	self.distance = self.ctrl.getDist()
 	self.distance_gap = 0

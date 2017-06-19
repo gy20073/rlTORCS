@@ -3,6 +3,9 @@ import gym
 from gym import spaces
 import numpy as np
 
+image_width = 160
+image_height = 120
+
 class TorcsEnv(gym.Env):
     '''
     sample config dict
@@ -33,7 +36,7 @@ class TorcsEnv(gym.Env):
         else:
             raise ValueError("invalid subtype of the environment, subtype = ", subtype)
 
-        self.observation_space = spaces.Box(low=0, high=255, shape=(480, 640, 3))
+        self.observation_space = spaces.Box(low=0, high=255, shape=(image_height, image_width, 3))
 
     def _reset(self):
         obs = lua.eval("env:start()")
@@ -84,7 +87,7 @@ class TorcsEnv(gym.Env):
         return obs
 
     def _get_image(self):
-        observation_RGB = np.zeros((3, 480, 640), dtype=np.float32)
+        observation_RGB = np.zeros((3, image_height, image_width), dtype=np.float32)
         self.call_ctrl("getRGBImage", observation_RGB, 0)
         return self._convert_obs(observation_RGB)
 
