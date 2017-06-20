@@ -89,7 +89,9 @@ function Torcs:start()
 	self.distance = -99999
 	self.frontNum = -1
 
-	config_path = paths.concat('game_config', self.game_config)
+	--config_path = paths.concat('game_config', self.game_config)
+	config_path = self.game_config
+
 	self.ctrl.initializeMem()
 	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or self.screen, config_path)
 	self:connect()

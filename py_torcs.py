@@ -3,7 +3,7 @@ import gym
 from gym import spaces
 import numpy as np
 from multiprocessing.managers import SyncManager
-import os
+import inspect, os
 
 class MyManager(SyncManager):
     pass
@@ -23,8 +23,6 @@ class TorcsEnv(gym.Env):
               'screen': screen}
     # some constants:
         use_RGB=True
-    # other parameters
-        _screen
     # what to control
         server=True
         auto_back=False
@@ -78,6 +76,17 @@ class TorcsEnv(gym.Env):
         self.viewer = None
 
         if subtype == "discrete":
+            # add the path to the lua path
+            # current file directory
+            currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+            self.lg.currentdir = ";" + currentdir+"/?.lua"
+            self.lg.currentdir2 = ";" + currentdir + "/TORCS/?.so"
+            lua.execute("package.path = package.path .. currentdir")
+            lua.execute("package.cpath = package.cpath .. currentdir2")
+
+            # another option is changing to the torcs working directory
+            #os.chdir("../../rlTORCS")
+
             self.lg.env_class = lua.require("TORCS.TorcsDiscrete")
             lua.execute(" env = env_class(opt) ")
             self.action_space = spaces.Discrete(9)
