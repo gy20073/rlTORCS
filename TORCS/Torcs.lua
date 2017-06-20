@@ -42,6 +42,7 @@ function Torcs:_init(opts)
 	self.game_config = opts.game_config and opts.game_config or 'quickrace_discrete_single.xml'
 	self.auto_back = opts.auto_back and opts.auto_back or false
 	self.use_RGB = opts.use_RGB and opts.use_RGB or false
+	self.screen = opts.screen and opts.screen or 0
 
 	self.wrapperPid = -1
 	self.nan_count = 0
@@ -90,7 +91,7 @@ function Torcs:start()
 
 	config_path = paths.concat('game_config', self.game_config)
 	self.ctrl.initializeMem()
-	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or 0, config_path)
+	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or self.screen, config_path)
 	self:connect()
 	self.distance = self.ctrl.getDist()
 	self.distance_gap = 0

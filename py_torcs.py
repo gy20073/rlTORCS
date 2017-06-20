@@ -2,6 +2,13 @@ import lua
 import gym
 from gym import spaces
 import numpy as np
+from multiprocessing.managers import SyncManager
+import os
+
+class MyManager(SyncManager):
+    pass
+
+MyManager.register("syncdict")
 
 image_width = 160
 image_height = 120
@@ -12,13 +19,56 @@ class TorcsEnv(gym.Env):
     lg.opt = {'server': server,
               'game_config': game_config,
               'mkey': mkey,
-              'auto_back': auto_back}
+              'auto_back': auto_back,
+              'screen': screen}
     # some constants:
         use_RGB=True
+    # other parameters
+        _screen
+    # what to control
+        server=True
+        auto_back=False
+        game_config=fixed for now
+        for each task: auto set
+            unique mkey: 0,1,2,3...
+            unique same screen
     '''
-    
+
+    def allocate_id(self):
+        #self.lock.acquire()
+        self.id = -1
+        for i in range(15):
+            if self.syncdict.get(i)==False:
+                self.syncdict.update([(i, True)])
+                self.id = i
+                break
+        print "after allocate", self.syncdict
+        #self.lock.release()
+        if self.id == -1:
+            raise ValueError("all slots full")
+
+    def free_id(self):
+        #self.lock.acquire()
+        assert(self.syncdict.get(self.id) == True)
+        self.syncdict.update([(self.id, False)])
+        self.id = -1
+        print "after free", self.syncdict
+        #self.lock.release()
 
     def __init__(self, subtype="discrete", **kwargs):
+        # set up the connection to the display
+        os.environ['DISPLAY'] = ":99"
+
+        # connect to the resource manager
+        manager = MyManager(("127.0.0.1", 5000), authkey="password")
+        manager.connect()
+        self.syncdict = manager.syncdict()
+        # decide not to use a lock
+
+        # use the manager to get a valid id
+        self.allocate_id()
+        kwargs.update(mkey=self.id+100, screen=self.id)
+
         self.sample_luaTable_type = type(lua.toTable({}))
     
         self.lg = lua.globals()
@@ -73,6 +123,7 @@ class TorcsEnv(gym.Env):
 
     def _close(self):
         lua.execute(" env:cleanUp() ")
+        self.free_id()
 
     def __del__(self):
         self.close()
