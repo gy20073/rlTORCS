@@ -31,6 +31,7 @@ class TorcsEnv(gym.Env):
             unique mkey: 0,1,2,3...
             unique same screen
     '''
+    metadata = {'render.modes': ['human']}
 
     def allocate_id(self):
         #self.lock.acquire()
@@ -53,7 +54,18 @@ class TorcsEnv(gym.Env):
         print "after free", self.syncdict
         #self.lock.release()
 
-    def __init__(self, subtype="discrete", **kwargs):
+    def __init__(self, subtype="discrete_improved", **kwargs):
+        self.subtype = subtype
+        self.kwargs = kwargs
+        self.inited = False
+
+        if subtype.startswith("discrete"):
+            self.action_space = spaces.Discrete(9)
+        else:
+            raise ValueError("invalid subtype")
+        self.observation_space = spaces.Box(low=0, high=255, shape=(image_height, image_width, 3))
+
+    def init_impl(self, subtype="discrete_improved", **kwargs):
         # set up the connection to the display
         os.environ['DISPLAY'] = ":99"
 
@@ -72,38 +84,45 @@ class TorcsEnv(gym.Env):
         self.lg = lua.globals()
         kwargs.update(use_RGB=True)
         self.lg.opt = lua.toTable(kwargs)
-        self.subtype = subtype
+        #self.subtype = subtype
         self.viewer = None
 
+        # add the path to the lua path
+        # current file directory
+        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        self.lg.currentdir = ";" + currentdir + "/?.lua"
+        self.lg.currentdir2 = ";" + currentdir + "/TORCS/?.so"
+        lua.execute("package.path = package.path .. currentdir")
+        lua.execute("package.cpath = package.cpath .. currentdir2")
+
+        # another option is changing to the torcs working directory
+        # os.chdir("../../rlTORCS")
+
         if subtype == "discrete":
-            # add the path to the lua path
-            # current file directory
-            currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-            self.lg.currentdir = ";" + currentdir+"/?.lua"
-            self.lg.currentdir2 = ";" + currentdir + "/TORCS/?.so"
-            lua.execute("package.path = package.path .. currentdir")
-            lua.execute("package.cpath = package.cpath .. currentdir2")
-
-            # another option is changing to the torcs working directory
-            #os.chdir("../../rlTORCS")
-
             self.lg.env_class = lua.require("TORCS.TorcsDiscrete")
             lua.execute(" env = env_class(opt) ")
-            self.action_space = spaces.Discrete(9)
+            #self.action_space = spaces.Discrete(9)
+        elif subtype == "discrete_improved":
+            self.lg.env_class = lua.require("TORCS.TorcsDiscreteConstDamagePos")
+            lua.execute(" env = env_class(opt) ")
+            #self.action_space = spaces.Discrete(9)
         elif subtype == "continuous":
             raise NotImplemented("continuous subtype action has not been implemented")
         else:
             raise ValueError("invalid subtype of the environment, subtype = ", subtype)
 
-        self.observation_space = spaces.Box(low=0, high=255, shape=(image_height, image_width, 3))
-
     def _reset(self):
+        if not self.inited:
+            print("initializing the first time")
+            self.inited=True
+            self.init_impl(self.subtype, **self.kwargs)
+
         obs = lua.eval("env:start()")
         return self._convert_obs(obs)
 
     def _step(self, u):
         assert self.action_space.contains(u)
-        if self.subtype == "discrete":
+        if self.subtype == "discrete" or self.subtype == "discrete_improved":
             # convert 0 based indexing to 1 based indexing in rlTorcs
             u += 1
 

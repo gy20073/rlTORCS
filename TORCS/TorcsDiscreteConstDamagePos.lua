@@ -11,7 +11,8 @@ local TorcsDiscreteConstDamagePos, super = classic.class('TorcsDiscreteConstDama
 -- Constructor
 function TorcsDiscreteConstDamagePos:_init(opts)
 	super._init(self, opts)
-	classic.strict(self)
+	-- enable the line below will have strange error
+	-- classic.strict(self)
 end
 
 function TorcsDiscreteConstDamagePos:reward()
