@@ -31,7 +31,7 @@ class TorcsEnv(gym.Env):
             unique mkey: 0,1,2,3...
             unique same screen
     '''
-    metadata = {'render.modes': ['human']}
+    metadata = {'render.modes': ['human', 'rgb_array']}
 
     def allocate_id(self):
         #self.lock.acquire()
