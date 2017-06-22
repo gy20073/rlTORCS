@@ -85,7 +85,7 @@ class TorcsEnv(gym.Env):
         self.lg = lua.globals()
         # singleton design
         # the variables in TORCS.ctrl.cpp has not been append a suffix yet
-        assert not hasattr(self.lg, "hasFirstInstance")
+        assert (self.lg.hasFirstInstance is None)
         self.lg.hasFirstInstance = True
 
         kwargs.update(use_RGB=True)
