@@ -45,6 +45,7 @@ function Torcs:_init(opts)
 	self.screen = opts.screen and opts.screen or 0
 
 	self.wrapperPid = -1
+	self.torcsPid = -1
 	self.nan_count = 0
 	self.stuck_count = 0
 
@@ -94,6 +95,8 @@ function Torcs:start()
 
 	self.ctrl.initializeMem()
 	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or self.screen, config_path)
+	-- now we have created a torcs game, so record it.
+	self.torcsPid = 1
 	self:connect()
 	self.distance = self.ctrl.getDist()
 	self.distance_gap = 0
@@ -119,13 +122,16 @@ function Torcs:connect( action )
 	self.ctrl.setSteerCmd(steer)
 	self.ctrl.setWritten(0)
 	local count = 0
+
+	-- print(self.wrapperPid)
+	-- print(self.ctrl.getPid())
+
 	while self.ctrl.getWritten() ~= 1 do
 		self.ctrl.sleep(1)
 		count = count + 1
 		if count > 20000 then
 			log.error("failed to connect to torcs")
-			self:terminate(self.wrapperPid)
-			self:terminate(self.ctrl.getPid())
+			self:kill()
 			return false
 		end
 	end
@@ -229,17 +235,20 @@ function Torcs:terminate(pid)
 end
 
 function Torcs:kill()
-	self:terminate(self.wrapperPid)
-		self:terminate(self.ctrl.getPid())
+	if self.wrapperPid > 0 then
+		self:terminate(self.wrapperPid)
 		self.wrapperPid = -1
+    end
+
+	if self.torcsPid > 0 then
+		self:terminate(self.ctrl.getPid())
+		self.torcsPid = -1
+	end
 end
 
 function Torcs:cleanUp()
-    self.isStarted = false
-	if self.wrapperPid > 0 then
-		self:terminate(self.wrapperPid)
-    end
-	self:terminate(self.ctrl.getPid())
+	self:kill()
+	self.isStarted = false
 	self.ctrl.cleanUp()
 end
 

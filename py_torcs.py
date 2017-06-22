@@ -78,12 +78,18 @@ class TorcsEnv(gym.Env):
         # use the manager to get a valid id
         self.allocate_id()
         kwargs.update(mkey=self.id+100, screen=self.id)
+        self.suffix = str(self.id)
 
         self.sample_luaTable_type = type(lua.toTable({}))
     
         self.lg = lua.globals()
+        # singleton design
+        # the variables in TORCS.ctrl.cpp has not been append a suffix yet
+        assert not hasattr(self.lg, "hasFirstInstance")
+        self.lg.hasFirstInstance = True
+
         kwargs.update(use_RGB=True)
-        self.lg.opt = lua.toTable(kwargs)
+        setattr(self.lg, "opt"+self.suffix, lua.toTable(kwargs))     #self.lg.opt = lua.toTable(kwargs)
         #self.subtype = subtype
         self.viewer = None
 
@@ -99,12 +105,12 @@ class TorcsEnv(gym.Env):
         # os.chdir("../../rlTORCS")
 
         if subtype == "discrete":
-            self.lg.env_class = lua.require("TORCS.TorcsDiscrete")
-            lua.execute(" env = env_class(opt) ")
+            setattr(self.lg, "env_class" + self.suffix, lua.require("TORCS.TorcsDiscrete"))   #self.lg.env_class = lua.require("TORCS.TorcsDiscrete")
+            lua.execute(" env"+self.suffix+" = env_class"+self.suffix+"(opt"+self.suffix+") ")
             #self.action_space = spaces.Discrete(9)
         elif subtype == "discrete_improved":
-            self.lg.env_class = lua.require("TORCS.TorcsDiscreteConstDamagePos")
-            lua.execute(" env = env_class(opt) ")
+            setattr(self.lg, "env_class" + self.suffix, lua.require("TORCS.TorcsDiscreteConstDamagePos"))   #self.lg.env_class = lua.require("TORCS.TorcsDiscreteConstDamagePos")
+            lua.execute(" env" + self.suffix + " = env_class" + self.suffix + "(opt" + self.suffix + ") ") #lua.execute(" env = env_class(opt) ")
             #self.action_space = spaces.Discrete(9)
         elif subtype == "continuous":
             raise NotImplemented("continuous subtype action has not been implemented")
@@ -117,7 +123,8 @@ class TorcsEnv(gym.Env):
             self.inited=True
             self.init_impl(self.subtype, **self.kwargs)
 
-        obs = lua.eval("env:start()")
+        lua.execute("env"+self.suffix+":kill()")
+        obs = lua.eval("env"+self.suffix+":start()")
         return self._convert_obs(obs)
 
     def _step(self, u):
@@ -127,7 +134,7 @@ class TorcsEnv(gym.Env):
             u += 1
 
         self.lg.u = u
-        lua.execute("res1, res2, res3 = env:step(u)")
+        lua.execute("res1, res2, res3 = env"+self.suffix+":step(u)")
         reward, observation, terminal = self.lg.res1, self.lg.res2, self.lg.res3
 
         return self._convert_obs(observation), reward, terminal, {}
@@ -150,7 +157,7 @@ class TorcsEnv(gym.Env):
     #def _seed(self):
 
     def _close(self):
-        lua.execute(" env:cleanUp() ")
+        lua.execute(" env"+self.suffix+":cleanUp() ")
         self.free_id()
 
     def __del__(self):
@@ -182,7 +189,7 @@ class TorcsEnv(gym.Env):
 
     def call_ctrl(self, func, *args):
         # general mapping from python command to lua control model
-        cmd = "env.ctrl."+func+"("
+        cmd = "env"+self.suffix+".ctrl."+func+"("
         n = len(args)
 
         for i in range(n):
