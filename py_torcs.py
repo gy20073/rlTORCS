@@ -58,6 +58,8 @@ class TorcsEnv(gym.Env):
         self.subtype = subtype
         self.kwargs = kwargs
         self.inited = False
+        self.id = -1
+        self.viewer = None
 
         if subtype.startswith("discrete"):
             self.action_space = spaces.Discrete(9)
@@ -91,7 +93,7 @@ class TorcsEnv(gym.Env):
         kwargs.update(use_RGB=True)
         setattr(self.lg, "opt"+self.suffix, lua.toTable(kwargs))     #self.lg.opt = lua.toTable(kwargs)
         #self.subtype = subtype
-        self.viewer = None
+        #self.viewer = None
 
         # add the path to the lua path
         # current file directory
@@ -158,7 +160,8 @@ class TorcsEnv(gym.Env):
 
     def _close(self):
         lua.execute(" env"+self.suffix+":cleanUp() ")
-        self.free_id()
+        if self.id > 0:
+            self.free_id()
 
     def __del__(self):
         self.close()

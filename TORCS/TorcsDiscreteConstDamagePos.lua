@@ -21,6 +21,9 @@ function TorcsDiscreteConstDamagePos:reward()
     end
 	local speedReward = (self.ctrl.getSpeed() * math.cos(self.ctrl.getAngle()))
 	local pos = math.abs(self.ctrl.getPos())
+	if speedReward~=speedReward or pos~=pos then
+		print("Nan reward, angle: " .. tostring(self.ctrl.getAngle()) .. "speed: " .. tostring(self.ctrl.getSpeed()) .. "pos: " ..  tostring(self.ctrl.getPos()))
+	end
 	return (speedReward - pos * 0.3) * 0.006
 end
 

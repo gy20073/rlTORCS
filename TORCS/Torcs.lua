@@ -7,6 +7,7 @@ threads.Threads.serialization('threads.sharedserialize')
 local Env = require 'TORCS.Env'
 local math = require 'math'
 local Torcs, super = classic.class('Torcs', Env)
+local os = require 'os'
 
 -- WARNING: we should never use posix package here!!! (i.e. never call `posix = require 'posix'` etc.)
 -- otherwise the signal handler outside the thread will be blocked.
@@ -126,12 +127,14 @@ function Torcs:connect( action )
 	-- print(self.wrapperPid)
 	-- print(self.ctrl.getPid())
 
+	start_time = os.time()
 	while self.ctrl.getWritten() ~= 1 do
 		self.ctrl.sleep(1)
 		count = count + 1
-		if count > 20000 then
+		if os.time() - start_time > 60 then
 			-- log.error("failed to connect to torcs")
 			print("failed to connect to torcs")
+			print("elapsed time is " .. tostring(os.time() - start_time))
 			self:kill()
 			return false
 		end
@@ -200,14 +203,17 @@ function Torcs:step( action )
 		end
 	end
     if reward ~= reward then
-		log.error("nan reward!")
+		-- log.error("nan reward!")
+		print("nan reward!")
 		if not paths.dirp(paths.concat("test_img")) then
 			paths.mkdir("test_img")
 		end
 		self.nan_count = self.nan_count + 1
-		log.error("saving image to " .. "test_img/nan_thread_" .. tostring(__threadid) .. "_" .. tostring(self.nan_count) .. ".jpg")
+		-- log.error("saving image to " .. "test_img/nan_thread_" .. tostring(__threadid) .. "_" .. tostring(self.nan_count) .. ".jpg")
+		print("saving image to " .. "test_img/nan_thread_" .. tostring(__threadid) .. "_" .. tostring(self.nan_count) .. ".jpg")
 		image.save("test_img/nan_thread_" .. tostring(__threadid) .. "_" .. tostring(self.nan_count) .. ".jpg", self:getDisplay())
-		log.error("image saved")
+		--  log.error("image saved")
+		print("image saved")
 		reward = 0
 		terminal = true
 	end
