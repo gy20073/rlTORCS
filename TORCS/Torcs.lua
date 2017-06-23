@@ -130,7 +130,8 @@ function Torcs:connect( action )
 		self.ctrl.sleep(1)
 		count = count + 1
 		if count > 20000 then
-			log.error("failed to connect to torcs")
+			-- log.error("failed to connect to torcs")
+			print("failed to connect to torcs")
 			self:kill()
 			return false
 		end
