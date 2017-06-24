@@ -35,6 +35,14 @@ class TorcsEnv(gym.Env):
     '''
     metadata = {'render.modes': ['human', 'rgb_array']}
 
+    def print_slots(self, syncdict):
+        print "occupied slots: ",
+        for k in syncdict.keys():
+            if syncdict.get(k):
+                print k,
+
+        print ""
+
     def allocate_id(self):
         #self.lock.acquire()
         self.id = -1
@@ -43,7 +51,8 @@ class TorcsEnv(gym.Env):
                 self.syncdict.update([(i, True)])
                 self.id = i
                 break
-        print "after allocate", self.syncdict
+        print "after allocate: ",
+        self.print_slots(self.syncdict)
         #self.lock.release()
         if self.id == -1:
             raise ValueError("all slots full")
@@ -53,7 +62,8 @@ class TorcsEnv(gym.Env):
         assert(self.syncdict.get(self.id) == True)
         self.syncdict.update([(self.id, False)])
         self.id = -1
-        print "after free", self.syncdict
+        print "after free: ",
+        self.print_slots(self.syncdict)
         #self.lock.release()
 
     def __init__(self, subtype="discrete_improved", custom_reward="", **kwargs):
@@ -172,6 +182,7 @@ class TorcsEnv(gym.Env):
         angle = self.call_ctrl("getAngle")
         trackPos = self.call_ctrl("getPos")
         trackWidth = self.call_ctrl("getWidth")
+        #print("pos", trackPos, "width", trackWidth)
         relativePos = trackPos / (trackWidth/2.0)
         next_damage = self.call_ctrl("getDamage")
         is_stuck = lua.eval("env"+self.suffix+":isStuck()")
