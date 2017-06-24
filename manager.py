@@ -5,8 +5,9 @@ from threading import Lock
 class MyManager(SyncManager):
     pass
 
+max_clients=512
 syncdict = {}
-for i in range(15):
+for i in range(max_clients):
     syncdict[i] = False
 
 def get_dict():
@@ -17,5 +18,9 @@ if __name__ == "__main__":
     manager = MyManager(("127.0.0.1", 5000), authkey="password")
     manager.start()
     while True:
-        print manager.syncdict()
-        time.sleep(3)
+        print "occupied slots: ",
+        for i in range(max_clients):
+            if syncdict[i]:
+                print i,
+        print ""
+        time.sleep(10)

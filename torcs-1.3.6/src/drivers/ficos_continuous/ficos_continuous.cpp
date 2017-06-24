@@ -118,6 +118,7 @@ extern double* pspeed;
 extern double* pangle_in_rad;
 extern int* pdamage;
 extern double* ppos;
+extern double* pwidth;
 extern int* psegtype;
 extern double* pradius;
 extern int* _pisEnd;
@@ -252,6 +253,7 @@ drive(int index, tCarElt* car, tSituation *s)
     *pangle_in_rad = angle;
     *pdamage = car->_dammage;
     *ppos = car->_trkPos.toMiddle;
+    *pwidth = car->_trkPos.seg->width;
     *_pdist = car->_distRaced;
     *psegtype = car->_trkPos.seg->type;
     *pradius = car->_trkPos.seg->radius;

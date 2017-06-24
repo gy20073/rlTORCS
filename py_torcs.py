@@ -4,6 +4,8 @@ from gym import spaces
 import numpy as np
 from multiprocessing.managers import SyncManager
 import inspect, os
+from subprocess import Popen
+import math
 
 class MyManager(SyncManager):
     pass
@@ -54,22 +56,11 @@ class TorcsEnv(gym.Env):
         print "after free", self.syncdict
         #self.lock.release()
 
-    def __init__(self, subtype="discrete_improved", **kwargs):
-        self.subtype = subtype
-        self.kwargs = kwargs
-        self.inited = False
+    def __init__(self, subtype="discrete_improved", custom_reward="", **kwargs):
+        print("initializing the first time")
         self.id = -1
-        self.viewer = None
-
-        if subtype.startswith("discrete"):
-            self.action_space = spaces.Discrete(9)
-        else:
-            raise ValueError("invalid subtype")
-        self.observation_space = spaces.Box(low=0, high=255, shape=(image_height, image_width, 3))
-
-    def init_impl(self, subtype="discrete_improved", **kwargs):
-        # set up the connection to the display
-        os.environ['DISPLAY'] = ":99"
+        self.damage = 0
+        self.custom_reward = custom_reward
 
         # connect to the resource manager
         manager = MyManager(("127.0.0.1", 5000), authkey="password")
@@ -79,7 +70,10 @@ class TorcsEnv(gym.Env):
 
         # use the manager to get a valid id
         self.allocate_id()
-        kwargs.update(mkey=self.id+100, screen=self.id)
+        kwargs.update(mkey=self.id+200, screen=0)
+        # set up the connection to the display
+        os.environ['DISPLAY'] = ":"+str(self.id+100)
+        self.xvfb = Popen(['Xvfb', os.environ['DISPLAY'], "-screen", "0", str(image_width)+"x"+str(image_height)+"x24"])
         self.suffix = str(self.id)
 
         self.sample_luaTable_type = type(lua.toTable({}))
@@ -92,8 +86,8 @@ class TorcsEnv(gym.Env):
 
         kwargs.update(use_RGB=True)
         setattr(self.lg, "opt"+self.suffix, lua.toTable(kwargs))     #self.lg.opt = lua.toTable(kwargs)
-        #self.subtype = subtype
-        #self.viewer = None
+        self.subtype = subtype
+        self.viewer = None
 
         # add the path to the lua path
         # current file directory
@@ -109,22 +103,20 @@ class TorcsEnv(gym.Env):
         if subtype == "discrete":
             setattr(self.lg, "env_class" + self.suffix, lua.require("TORCS.TorcsDiscrete"))   #self.lg.env_class = lua.require("TORCS.TorcsDiscrete")
             lua.execute(" env"+self.suffix+" = env_class"+self.suffix+"(opt"+self.suffix+") ")
-            #self.action_space = spaces.Discrete(9)
+            self.action_space = spaces.Discrete(9)
         elif subtype == "discrete_improved":
             setattr(self.lg, "env_class" + self.suffix, lua.require("TORCS.TorcsDiscreteConstDamagePos"))   #self.lg.env_class = lua.require("TORCS.TorcsDiscreteConstDamagePos")
             lua.execute(" env" + self.suffix + " = env_class" + self.suffix + "(opt" + self.suffix + ") ") #lua.execute(" env = env_class(opt) ")
-            #self.action_space = spaces.Discrete(9)
+            self.action_space = spaces.Discrete(9)
         elif subtype == "continuous":
             raise NotImplemented("continuous subtype action has not been implemented")
         else:
             raise ValueError("invalid subtype of the environment, subtype = ", subtype)
 
-    def _reset(self):
-        if not self.inited:
-            print("initializing the first time")
-            self.inited=True
-            self.init_impl(self.subtype, **self.kwargs)
+        self.observation_space = spaces.Box(low=0, high=255, shape=(image_height, image_width, 3))
 
+    def _reset(self):
+        self.damage = 0
         lua.execute("env"+self.suffix+":kill()")
         obs = lua.eval("env"+self.suffix+":start()")
         return self._convert_obs(obs)
@@ -138,6 +130,13 @@ class TorcsEnv(gym.Env):
         self.lg.u = u
         lua.execute("res1, res2, res3 = env"+self.suffix+":step(u)")
         reward, observation, terminal = self.lg.res1, self.lg.res2, self.lg.res3
+
+        if not(self.custom_reward == ""):
+            reward = eval("self."+self.custom_reward+"()")
+            if math.isnan(reward):
+                reward = 0
+                terminal = True
+                print("Warning encountered reward == NaN!")
 
         return self._convert_obs(observation), reward, terminal, {}
 
@@ -160,11 +159,32 @@ class TorcsEnv(gym.Env):
 
     def _close(self):
         lua.execute(" env"+self.suffix+":cleanUp() ")
+        self.xvfb.terminate()
         if self.id > 0:
             self.free_id()
 
     def __del__(self):
         self.close()
+
+    # below reward engineering
+    def reward_ben(self):
+        sp = self.call_ctrl("getSpeed")
+        angle = self.call_ctrl("getAngle")
+        trackPos = self.call_ctrl("getPos")
+        trackWidth = self.call_ctrl("getWidth")
+        relativePos = trackPos / (trackWidth/2.0)
+        next_damage = self.call_ctrl("getDamage")
+        is_stuck = lua.eval("env"+self.suffix+":isStuck()")
+
+        reward = sp * (np.cos(angle) - np.abs(np.sin(angle)) - np.abs(relativePos) )
+
+        # collision detection
+        if (next_damage - self.damage > 0) or is_stuck:
+            reward = -10
+        self.damage = next_damage
+
+        reward = reward / 100.0 * 2.5
+        return reward
 
     ######################## util functions ########################
     def _convert_obs(self, obs):
@@ -202,8 +222,10 @@ class TorcsEnv(gym.Env):
             setattr(self.lg, name, var)
             # and construct the calling command
             cmd += name + ","
-            
-        cmd = cmd[:-1] + ")"
+
+        if n > 0:
+            cmd = cmd[:-1]
+        cmd = cmd + ")"
         #print("calling command:", cmd)
 
         # multiple return results, not an issue here

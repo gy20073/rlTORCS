@@ -222,6 +222,9 @@ struct shared_use_st
     double radius;
     int frontCarNum;
     double frontDist;
+
+    // added by Yang
+    double width;
 };
 
 volatile int* pwritten = NULL;
@@ -242,6 +245,7 @@ volatile double* pspeed_ghost = NULL;
 volatile double* pangle_in_rad_ghost = NULL;
 volatile int* pdamage_ghost = NULL;
 volatile double* ppos_ghost = NULL;
+volatile double* pwidth_ghost = NULL;
 volatile int* psegtype_ghost = NULL;
 volatile double* pradius_ghost = NULL;
 volatile int* pfrontCarNum_ghost = NULL;
@@ -313,6 +317,7 @@ main(int argc, char *argv[])
     pangle_in_rad_ghost = &shared->angle_in_rad;
     pdamage_ghost = &shared->damage;
     ppos_ghost = &shared->pos;
+    pwidth_ghost = &shared->width;
     psegtype_ghost = &shared->segtype;
     pradius_ghost = &shared->radius;
     pfrontCarNum_ghost = &shared->frontCarNum;

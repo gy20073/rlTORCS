@@ -164,6 +164,9 @@ struct shared_use_st
     double radius;
     int frontCarNum;
     double frontDist;
+
+    // added by Yang
+    double width;
 };
 
 int initializeMem(lua_State *L){
@@ -332,6 +335,16 @@ int getPos(lua_State *L){
     lua_settop(L,0);
     double pos = shared->pos;
     lua_pushnumber(L, pos);
+    return 1;
+}
+
+int getWidth(lua_State *L){
+    lua_pushstring(L, "shared");
+    lua_gettable(L, LUA_REGISTRYINDEX);
+    volatile shared_use_st* volatile shared = ((shared_use_st*)lua_touserdata(L, -1));
+    lua_settop(L,0);
+    double width = shared->width;
+    lua_pushnumber(L, width);
     return 1;
 }
 
@@ -523,6 +536,7 @@ static const struct luaL_Reg myLib[] =
     {"getIsEnd", getIsEnd},
     {"setEnd", setEnd},
     {"getPos", getPos},
+    {"getWidth", getWidth},
     {"getSegType", getSegType},
     {"getRadius", getRadius},
     {"getDist", getDist},
