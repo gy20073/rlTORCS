@@ -66,11 +66,12 @@ class TorcsEnv(gym.Env):
         self.print_slots(self.syncdict)
         #self.lock.release()
 
-    def __init__(self, subtype="discrete_improved", custom_reward="", **kwargs):
+    def __init__(self, subtype="discrete_improved", custom_reward="", detailed_info=False, **kwargs):
         print("initializing the first time")
         self.id = -1
         self.damage = 0
         self.custom_reward = custom_reward
+	self.detailed_info = detailed_info
 
         # connect to the resource manager
         manager = MyManager(("127.0.0.1", 5000), authkey="password")
@@ -147,8 +148,17 @@ class TorcsEnv(gym.Env):
                 reward = 0
                 terminal = True
                 print("Warning encountered reward == NaN!")
-
-        return self._convert_obs(observation), reward, terminal, {}
+	if self.detailed_info:
+	    sp = self.call_ctrl("getSpeed")
+            angle = self.call_ctrl("getAngle")
+            trackPos = self.call_ctrl("getPos")
+            trackWidth = self.call_ctrl("getWidth")
+            next_damage = self.call_ctrl("getDamage")
+            is_stuck = lua.eval("env"+self.suffix+":isStuck()")
+	    return self._convert_obs(observation), reward, terminal, {'speed':sp, 'angle':angle, 'trackPos':trackPos, 'trackWidth':trackWidth, \
+			'damage':self.damage, 'next_damage':next_damage, 'is_stuck':is_stuck}
+	else:
+            return self._convert_obs(observation), reward, terminal, {}
 
     def _render(self, mode="human", close=False):
         if close:
