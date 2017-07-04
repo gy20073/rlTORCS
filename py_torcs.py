@@ -46,7 +46,7 @@ class TorcsEnv(gym.Env):
     def allocate_id(self):
         #self.lock.acquire()
         self.id = -1
-        for i in range(15):
+        for i in range(1000):
             if self.syncdict.get(i)==False:
                 self.syncdict.update([(i, True)])
                 self.id = i
