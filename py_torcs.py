@@ -141,6 +141,13 @@ class TorcsEnv(gym.Env):
         self.lg.u = u
         lua.execute("res1, res2, res3 = env"+self.suffix+":step(u)")
         reward, observation, terminal = self.lg.res1, self.lg.res2, self.lg.res3
+        if self.detailed_info:
+            sp = self.call_ctrl("getSpeed")
+            angle = self.call_ctrl("getAngle")
+            trackPos = self.call_ctrl("getPos")
+            trackWidth = self.call_ctrl("getWidth")
+            next_damage = self.call_ctrl("getDamage")
+            is_stuck = lua.eval("env"+self.suffix+":isStuck()")
 
         if not(self.custom_reward == ""):
             reward = eval("self."+self.custom_reward+"()")
@@ -148,16 +155,10 @@ class TorcsEnv(gym.Env):
                 reward = 0
                 terminal = True
                 print("Warning encountered reward == NaN!")
-	if self.detailed_info:
-	    sp = self.call_ctrl("getSpeed")
-            angle = self.call_ctrl("getAngle")
-            trackPos = self.call_ctrl("getPos")
-            trackWidth = self.call_ctrl("getWidth")
-            next_damage = self.call_ctrl("getDamage")
-            is_stuck = lua.eval("env"+self.suffix+":isStuck()")
-	    return self._convert_obs(observation), reward, terminal, {'speed':sp, 'angle':angle, 'trackPos':trackPos, 'trackWidth':trackWidth, \
-			'damage':self.damage, 'next_damage':next_damage, 'is_stuck':is_stuck}
-	else:
+        if self.detailed_info:     
+            return self._convert_obs(observation), reward, terminal, {'speed':sp, 'angle':angle, 'trackPos':trackPos, 'trackWidth':trackWidth, \
+                   'damage':self.damage, 'next_damage':next_damage, 'is_stuck':is_stuck}
+        else:
             return self._convert_obs(observation), reward, terminal, {}
 
     def _render(self, mode="human", close=False):
