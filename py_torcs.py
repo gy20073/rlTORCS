@@ -34,6 +34,16 @@ class TorcsEnv(gym.Env):
             unique same screen
     '''
     metadata = {'render.modes': ['human', 'rgb_array']}
+    def get_keys_to_action(self):
+        keys = [ord('e'),ord('w'), ord('q'), ord('d'), ord('a'), ord('s'),ord('z')]
+        keys_to_action = {}
+        action_list = [0,1,2,3,5,6,7,8]
+        for i,key in enumerate(keys):
+            keys_to_action[tuple([key])] = action_list[i]
+        #keys_to_action[tuple(keys)] = [0,1,2,3,5,6,7,8]
+
+        return keys_to_action
+
 
     def print_slots(self, syncdict):
         print "occupied slots: ",
@@ -71,7 +81,7 @@ class TorcsEnv(gym.Env):
         self.id = -1
         self.damage = 0
         self.custom_reward = custom_reward
-	self.detailed_info = detailed_info
+        self.detailed_info = detailed_info
 
         # connect to the resource manager
         manager = MyManager(("127.0.0.1", 5000), authkey="password")
@@ -148,16 +158,20 @@ class TorcsEnv(gym.Env):
             trackWidth = self.call_ctrl("getWidth")
             next_damage = self.call_ctrl("getDamage")
             is_stuck = lua.eval("env"+self.suffix+":isStuck()")
-
+            #print('************* the damage number ***************')
+            #print(self.damage)
+            #print(next_damage)
+            #print('***********************************************')
+	    info = {'speed':sp, 'angle':angle, 'trackPos':trackPos, 'trackWidth':trackWidth, \
+                   'damage':self.damage, 'next_damage':next_damage, 'is_stuck':is_stuck}
         if not(self.custom_reward == ""):
             reward = eval("self."+self.custom_reward+"()")
             if math.isnan(reward):
                 reward = 0
                 terminal = True
                 print("Warning encountered reward == NaN!")
-        if self.detailed_info:     
-            return self._convert_obs(observation), reward, terminal, {'speed':sp, 'angle':angle, 'trackPos':trackPos, 'trackWidth':trackWidth, \
-                   'damage':self.damage, 'next_damage':next_damage, 'is_stuck':is_stuck}
+	if self.detailed_info:
+            return self._convert_obs(observation), reward, terminal, info
         else:
             return self._convert_obs(observation), reward, terminal, {}
 

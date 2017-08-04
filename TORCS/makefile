@@ -1,6 +1,6 @@
 .PHONY: clean
 
-LIBOPTS = -I$(HOME)/torch/install/include -L$(HOME)/torch/install/lib -lTH
+LIBOPTS = -I/data/hxu/code/torch/install/include -L/data/hxu/code/torch/install/lib -lTH
 CFLAGS = -fPIC -shared -g
 CC = gcc
 
