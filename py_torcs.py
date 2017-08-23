@@ -202,6 +202,40 @@ class TorcsEnv(gym.Env):
         self.close()
 
     # below reward engineering
+    def reward_simple_addconst(self):
+        sp = self.call_ctrl("getSpeed")
+        angle = self.call_ctrl("getAngle")
+        next_damage = self.call_ctrl("getDamage")
+        is_stuck = lua.eval("env"+self.suffix+":isStuck()")
+
+        sp_parallel  = sp * np.cos(angle)
+        sp_vertical  = sp * np.sin(angle)
+        sp_threshold = 20 
+
+        reward = - (np.abs(sp_parallel - sp_threshold) + np.abs(sp_vertical) ) / 5 + 3
+        if (next_damage - self.damage > 0) or is_stuck:
+            reward = -10
+        self.damage = next_damage
+        reward = reward / 100.0 * 2.5   
+        return reward
+
+    def reward_simple(self):
+        sp = self.call_ctrl("getSpeed")
+        angle = self.call_ctrl("getAngle")
+        next_damage = self.call_ctrl("getDamage")
+        is_stuck = lua.eval("env"+self.suffix+":isStuck()")
+
+        sp_parallel  = sp * np.cos(angle)
+        sp_vertical  = sp * np.sin(angle)
+        sp_threshold = 20 
+
+        reward = - (np.abs(sp_parallel - sp_threshold) + np.abs(sp_vertical) ) / 5
+        if (next_damage - self.damage > 0) or is_stuck:
+            reward = -10
+        self.damage = next_damage
+        reward = reward / 100.0 * 2.5   
+        return reward
+
     def reward_ben(self):
         sp = self.call_ctrl("getSpeed")
         angle = self.call_ctrl("getAngle")
