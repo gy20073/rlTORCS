@@ -9,15 +9,16 @@ local TorcsDiscrete, super = classic.class('TorcsDiscrete', Torcs)
 -- WARNING: we should never use posix package here!!! (i.e. never call `posix = require 'posix'` etc.)
 -- otherwise the signal handler outside the thread will be blocked.
 
+-- accel, brake, steer
 local actionMap = {}
 actionMap[1] = {1, 0,  1}
-actionMap[2] = {1, 0,  0}
+actionMap[2] = {1, 0,  0} -- 1==acceleration
 actionMap[3] = {1, 0, -1}
-actionMap[4] = {0, 0,  1}
+actionMap[4] = {0, 0,  1} -- 3 == steer right
 actionMap[5] = {0, 0,  0}
-actionMap[6] = {0, 0, -1}
+actionMap[6] = {0, 0, -1} -- 5 == steer left
 actionMap[7] = {0, 1,  1}
-actionMap[8] = {0, 1,  0}
+actionMap[8] = {0, 1,  0} -- 7 == break
 actionMap[9] = {0, 1, -1}
 
 -- Constructor
