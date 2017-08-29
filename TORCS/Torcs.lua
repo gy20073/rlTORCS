@@ -98,7 +98,12 @@ function Torcs:start()
 	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or self.screen, config_path)
 	-- now we have created a torcs game, so record it.
 	self.torcsPid = 1
-	self:connect()
+	if not self:connect() then
+		-- If failed, then kill the process and restart the start process
+	    print("connect to torcs failed in start(), try to kill and restart")
+		self:kill()
+		return self:start()
+	end
 	self.distance = self.ctrl.getDist()
 	self.distance_gap = 0
 	if self.use_RGB then
