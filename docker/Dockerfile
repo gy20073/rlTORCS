@@ -38,3 +38,23 @@ WORKDIR /root/
 RUN git clone https://github.com/gy20073/lunatic-python.git /root/lunatic_python --recursive
 WORKDIR /root/lunatic_python
 RUN python setup.py install
+
+# install torcs env
+WORKDIR /root/
+RUN git clone https://github.com/gy20073/rlTORCS.git --recursive
+WORKDIR /root/rlTORCS/torcs-1.3.6
+RUN make clean
+WORKDIR /root/rlTORCS
+
+RUN echo "deb-src http://archive.ubuntu.com/ubuntu/ xenial main restricted" >> /etc/apt/sources.list
+RUN echo "deb-src http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted" >> /etc/apt/sources.list
+RUN echo "deb-src http://archive.ubuntu.com/ubuntu/ xenial universe" >> /etc/apt/sources.list
+RUN echo "deb-src http://archive.ubuntu.com/ubuntu/ xenial-updates universe" >> /etc/apt/sources.list
+RUN apt-get update
+WORKDIR /root/rlTORCS
+RUN ./install_nosudo.sh
+WORKDIR /root/
+# change the default resolution
+RUN torcs
+RUN sed -i 's/640/160/g' /root/.torcs/config/screen.xml
+RUN sed -i 's/480/120/g' /root/.torcs/config/screen.xml
