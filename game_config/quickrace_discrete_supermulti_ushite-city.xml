@@ -50,7 +50,7 @@
     <section name="1">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="inferno"/>
-    </section>
+    </section> 
 
     <section name="2">
       <attnum name="idx" val="3"/>
@@ -67,10 +67,10 @@
       <attstr name="module" val="inferno"/>
     </section>
 
-    <section name="5">
+     <section name="5">
       <attnum name="idx" val="6"/>
       <attstr name="module" val="inferno"/>
-    </section>
+    </section>   
 
     <section name="6">
       <attnum name="idx" val="7"/>
@@ -82,7 +82,7 @@
       <attstr name="module" val="inferno"/>
     </section>
 
-    <section name="8">
+    <!-- <section name="8">
       <attnum name="idx" val="9"/>
       <attstr name="module" val="inferno"/>
     </section>
@@ -90,7 +90,7 @@
     <section name="9">
       <attnum name="idx" val="10"/>
       <attstr name="module" val="inferno"/>
-    </section>
+    </section> 
 
     <section name="10">
       <attnum name="idx" val="0"/>
@@ -105,47 +105,47 @@
     <section name="12">
       <attnum name="idx" val="2"/>
       <attstr name="module" val="olethros"/>
-    </section>
+    </section> -->
 
-    <section name="13">
+    <section name="8">
       <attnum name="idx" val="3"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="14">
+    <section name="9">
       <attnum name="idx" val="4"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="15">
+    <section name="10">
       <attnum name="idx" val="5"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="16">
+    <section name="11">
       <attnum name="idx" val="6"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="17">
+    <section name="12">
       <attnum name="idx" val="7"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="18">
+    <section name="13">
       <attnum name="idx" val="8"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="19">
+    <section name="14">
       <attnum name="idx" val="9"/>
       <attstr name="module" val="olethros"/>
     </section>
 
-    <section name="20">
+    <!-- <section name="20">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="lliaw"/>
-    </section>
+    </section> 
 
     <section name="21">
       <attnum name="idx" val="3"/>
@@ -160,54 +160,54 @@
     <section name="23">
       <attnum name="idx" val="5"/>
       <attstr name="module" val="lliaw"/>
-    </section>
+    </section> -->
 
-    <section name="24">
+    <section name="15">
       <attnum name="idx" val="6"/>
       <attstr name="module" val="lliaw"/>
     </section>
 
-    <section name="25">
+    <section name="16">
       <attnum name="idx" val="7"/>
       <attstr name="module" val="lliaw"/>
     </section>
 
-    <section name="26">
+    <section name="17">
       <attnum name="idx" val="8"/>
       <attstr name="module" val="lliaw"/>
     </section>
 
-    <section name="27">
+    <section name="18">
       <attnum name="idx" val="9"/>
       <attstr name="module" val="lliaw"/>
     </section>
 
-    <section name="28">
+    <section name="19">
       <attnum name="idx" val="10"/>
       <attstr name="module" val="lliaw"/>
     </section>
 
-    <section name="29">
+    <section name="20">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="tita"/>
     </section>
 
-    <section name="30">
+    <section name="21">
       <attnum name="idx" val="3"/>
       <attstr name="module" val="tita"/>
     </section>
 
-    <section name="31">
+    <section name="22">
       <attnum name="idx" val="4"/>
       <attstr name="module" val="tita"/>
     </section>
 
-    <section name="32">
+    <section name="23">
       <attnum name="idx" val="5"/>
       <attstr name="module" val="tita"/>
     </section>
 
-    <section name="33">
+    <!-- <section name="33">
       <attnum name="idx" val="6"/>
       <attstr name="module" val="tita"/>
     </section>
@@ -235,17 +235,17 @@
     <section name="38">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="chenyi_AI2"/>
-    </section>
+    </section> -->
 
-    <section name="39">
+    <section name="24">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="chenyi_AI1"/>
-    </section>
+    </section> 
 
-    <section name="40">
+    <section name="25">
       <attnum name="idx" val="1"/>
       <attstr name="module" val="ficos_discrete"/>
-    </section>
+    </section> 
 
   </section>
 
@@ -277,7 +277,7 @@
     <section name="1">
       <attstr name="module" val="inferno"/>
       <attnum name="idx" val="1"/>
-    </section>
+    </section> 
 
     <section name="2">
       <attstr name="module" val="inferno"/>
@@ -309,7 +309,7 @@
       <attnum name="idx" val="8"/>
     </section>
 
-    <section name="8">
+    <!-- <section name="8">
       <attstr name="module" val="inferno"/>
       <attnum name="idx" val="9"/>
     </section>
@@ -332,44 +332,44 @@
     <section name="12">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="3"/>
-    </section>
+    </section>   -->
 
-    <section name="13">
+    <section name="8">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="4"/>
     </section>
 
-    <section name="14">
+    <section name="9">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="5"/>
     </section>
 
-    <section name="15">
+    <section name="10">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="6"/>
     </section>
 
-    <section name="16">
+    <section name="11">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="7"/>
     </section>
 
-    <section name="17">
+    <section name="12">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="8"/>
     </section>
 
-    <section name="18">
+    <section name="13">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="9"/>
     </section>
 
-    <section name="19">
+    <section name="14">
       <attstr name="module" val="inferno2"/>
       <attnum name="idx" val="10"/>
     </section>
 
-    <section name="20">
+    <!-- <section name="20">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="0"/>
     </section>
@@ -387,54 +387,54 @@
     <section name="23">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="3"/>
-    </section>
+    </section> -->
 
-    <section name="24">
+    <section name="15">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="4"/>
     </section>
 
-    <section name="25">
+    <section name="16">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="5"/>
     </section>
 
-    <section name="26">
+    <section name="17">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="6"/>
     </section>
 
-    <section name="27">
+    <section name="18">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="7"/>
     </section>
 
-    <section name="28">
+    <section name="19">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="8"/>
     </section>
 
-    <section name="29">
+    <section name="20">
       <attstr name="module" val="olethros"/>
       <attnum name="idx" val="9"/>
     </section>
 
-    <section name="30">
+     <section name="21">
       <attstr name="module" val="lliaw"/>
       <attnum name="idx" val="1"/>
     </section>
 
-    <section name="31">
+    <section name="22">
       <attstr name="module" val="lliaw"/>
       <attnum name="idx" val="3"/>
     </section>
 
-    <section name="32">
+    <section name="23">
       <attstr name="module" val="lliaw"/>
       <attnum name="idx" val="4"/>
     </section>
 
-    <section name="33">
+    <!-- <section name="33">
       <attstr name="module" val="lliaw"/>
       <attnum name="idx" val="5"/>
     </section>
@@ -462,17 +462,17 @@
     <section name="38">
       <attstr name="module" val="lliaw"/>
       <attnum name="idx" val="10"/>
-    </section>
+    </section> --> 
 
-    <section name="39">
+    <section name="24">
       <attstr name="module" val="chenyi_AI1"/>
       <attnum name="idx" val="1"/>
     </section>
 
-    <section name="40">
+    <section name="25">
       <attstr name="module" val="ficos_discrete"/>
       <attnum name="idx" val="1"/>
-    </section>
+    </section> 
 
   </section>
 

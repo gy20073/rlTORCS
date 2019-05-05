@@ -170,7 +170,7 @@ class TorcsEnv(gym.Env):
                 reward = 0
                 terminal = True
                 print("Warning encountered reward == NaN!")
-	if self.detailed_info:
+        if self.detailed_info:
             return self._convert_obs(observation), reward, terminal, info
         else:
             return self._convert_obs(observation), reward, terminal, {}
@@ -210,9 +210,9 @@ class TorcsEnv(gym.Env):
 
         sp_parallel  = sp * np.cos(angle)
         sp_vertical  = sp * np.sin(angle)
-        sp_threshold = 20 
+        sp_threshold = 20
 
-        reward = - (np.abs(sp_parallel - sp_threshold) + np.abs(sp_vertical) ) / 5 + 3
+        reward = - (np.abs(sp_parallel - sp_threshold) + np.abs(sp_vertical) ) / 5 + 5
         if (next_damage - self.damage > 0) or is_stuck:
             reward = -10
         self.damage = next_damage
@@ -255,6 +255,24 @@ class TorcsEnv(gym.Env):
 
         reward = reward / 100.0 * 2.5
         return reward
+
+    def reward_speed(self):
+        sp = self.call_ctrl("getSpeed")
+        angle = self.call_ctrl("getAngle")
+        next_damage = self.call_ctrl("getDamage")
+        is_stuck = lua.eval("env" + self.suffix + ":isStuck()")
+
+        reward = (sp/2.5)**2
+
+        # collision detection
+        if (next_damage - self.damage > 0) or is_stuck:
+            reward = -10
+        self.damage = next_damage
+
+        reward = reward / 100.0 * 2.5
+        return reward
+
+
 
     ######################## util functions ########################
     def _convert_obs(self, obs):
