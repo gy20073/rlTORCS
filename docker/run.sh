@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 docker run \
     -it \
-    --volume="/data:/data:rw" \
+    --volume="/data:/data2:rw" \
     --volume="/data1:/data1:rw" \
     --volume="/data2:/data2:rw" \
     --volume="/data4:/data4:rw" \

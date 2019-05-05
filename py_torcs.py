@@ -94,7 +94,7 @@ class TorcsEnv(gym.Env):
         kwargs.update(mkey=self.id+200, screen=0)
         # set up the connection to the display
         os.environ['DISPLAY'] = ":"+str(self.id+100)
-        self.xvfb = Popen(['Xvfb', os.environ['DISPLAY'], "-screen", "0", str(image_width)+"x"+str(image_height)+"x24"])
+        self.xvfb = Popen(['Xvfb', os.environ['DISPLAY'], "-screen", "0", str(image_width)+"x"+str(image_height)+"x24", "+iglx"])
         self.suffix = str(self.id)
 
         self.sample_luaTable_type = type(lua.toTable({}))
