@@ -203,7 +203,7 @@ function Torcs:step( action )
 	if self:isStuck() then
 		-- log.info("stuck_count: %d", self.stuck_count)
 		self.stuck_count = self.stuck_count + 1
-		if self.stuck_count > 50 then
+		if self.stuck_count > 50 then   --original 50--
 			terminal = true
 		end
 	end
