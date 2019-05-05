@@ -26,12 +26,11 @@ function Torcs:_init(opts)
 		self.mkey = 817 -- in honor of the elder, +1s!
 	end
 	self.nowStep = 0
-
+	self._seed = 0
 	local temp = package.cpath
 	package.cpath = package.cpath .. ";TORCS/?.so"
 	self.ctrl = require 'TORCSctrl'
 	package.cpath = temp
-
 	self.damage = 0
 	self.distance = -9999
 	self.distance_gap = 0
