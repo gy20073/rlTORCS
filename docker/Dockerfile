@@ -38,3 +38,11 @@ WORKDIR /root/
 RUN git clone https://github.com/gy20073/lunatic-python.git /root/lunatic_python --recursive
 WORKDIR /root/lunatic_python
 RUN python setup.py install
+RUN wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
+RUN ./Anaconda3-2019.03-Linux-x86_64.sh
+RUN source ~/.bashrc
+RUN conda create -n imperfect python=3.6
+RUN . source imperfect
+RUN pip install tensorflow-gpu
+
+
