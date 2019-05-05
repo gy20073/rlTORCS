@@ -61,6 +61,6 @@ RUN sed -i 's/480/120/g' /root/.torcs/config/screen.xml
 
 RUN wget https://repo.anaconda.com/archive/Anaconda3-2019.03-Linux-x86_64.sh
 RUN bash ./Anaconda3-2019.03-Linux-x86_64.sh -b -p /root/anaconda/
-RUN pip install tensorflow-gpu
-RUN pip install gym
+RUN pip install tensorflow-gpu==1.4.0
+RUN pip install gym==0.9.2
 RUN pip install opencv-python
