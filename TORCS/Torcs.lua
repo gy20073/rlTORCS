@@ -98,7 +98,12 @@ function Torcs:start()
 	self.wrapperPid = self.ctrl.newGame(self.auto_back and 1 or 0, self.mkey, self.server and 1 or 0, __threadid and __threadid or self.screen, config_path)
 	-- now we have created a torcs game, so record it.
 	self.torcsPid = 1
-	self:connect()
+	if not self:connect() then
+		-- If failed, then kill the process and restart the start process
+	    print("connect to torcs failed in start(), try to kill and restart")
+		self:kill()
+		return self:start()
+	end
 	self.distance = self.ctrl.getDist()
 	self.distance_gap = 0
 	if self.use_RGB then
@@ -131,7 +136,7 @@ function Torcs:connect( action )
 	while self.ctrl.getWritten() ~= 1 do
 		self.ctrl.sleep(1)
 		count = count + 1
-		if os.time() - start_time > 60 then
+		if os.time() - start_time > 600 then
 			-- log.error("failed to connect to torcs")
 			print("failed to connect to torcs")
 			print("elapsed time is " .. tostring(os.time() - start_time))
@@ -155,7 +160,7 @@ function Torcs:reward()
 end
 
 function Torcs:isStuck()
-	return math.abs(self.ctrl.getAngle()) > math.pi * 50 / 180 and self.ctrl.getSpeed() < 1
+	return math.abs(self.ctrl.getAngle()) > math.pi * 50 / 180 and self.ctrl.getSpeed() < 1 and self.ctrl.getSpeed()>-1
 end
 
 function Torcs:getSegType()
@@ -198,7 +203,7 @@ function Torcs:step( action )
 	if self:isStuck() then
 		-- log.info("stuck_count: %d", self.stuck_count)
 		self.stuck_count = self.stuck_count + 1
-		if self.stuck_count > 500 then
+		if self.stuck_count > 50 then
 			terminal = true
 		end
 	end
